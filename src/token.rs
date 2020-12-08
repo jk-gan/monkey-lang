@@ -1,6 +1,6 @@
 #[derive(Eq, PartialEq, Debug)]
 pub enum Token {
-    Illegal,
+    Illegal(char),
     EOF,
 
     // Identifier + literals
@@ -23,4 +23,12 @@ pub enum Token {
     // Keywords
     Function,
     Let,
+}
+
+pub fn lookup_keyword(ident: &str) -> Option<Token> {
+    match ident {
+        "fn" => Some(Token::Function),
+        "let" => Some(Token::Let),
+        _ => None,
+    }
 }
