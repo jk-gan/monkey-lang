@@ -26,6 +26,8 @@ impl<'a> Lexer<'a> {
         } else {
             if let Some(ch) = self.input.chars().nth(self.read_position) {
                 self.ch = ch;
+            } else {
+                println!("Here");
             }
         }
 
@@ -34,6 +36,7 @@ impl<'a> Lexer<'a> {
     }
 
     fn next_token(&mut self) -> Token {
+        self.skip_whitespace();
         let token = match self.ch {
             '=' => Token::Assign,
             ';' => Token::Semicolon,
@@ -45,14 +48,14 @@ impl<'a> Lexer<'a> {
             '}' => Token::RBrace,
             '\u{0000}' => Token::EOF,
             x => {
-                println!("{}x", x);
                 if is_letter(x) {
                     let ident = self.read_identifier();
-                    println!("{}y", ident);
-                    match lookup_keyword(&ident) {
+                    return match lookup_keyword(&ident) {
                         Some(token) => token,
                         None => Token::Ident(ident),
-                    }
+                    };
+                } else if is_digit(x) {
+                    return Token::Int(self.read_number());
                 } else {
                     Token::Illegal(x)
                 }
@@ -75,10 +78,33 @@ impl<'a> Lexer<'a> {
             .take(self.position - position)
             .collect()
     }
+
+    fn read_number(&mut self) -> String {
+        let position = self.position;
+        while is_digit(self.ch) {
+            self.read_char();
+        }
+
+        self.input
+            .chars()
+            .skip(position)
+            .take(self.position - position)
+            .collect()
+    }
+
+    fn skip_whitespace(&mut self) {
+        while self.ch.is_ascii_whitespace() {
+            self.read_char();
+        }
+    }
 }
 
 fn is_letter(character: char) -> bool {
     character.is_ascii_alphabetic() || character == '_'
+}
+
+fn is_digit(character: char) -> bool {
+    character.is_ascii_digit()
 }
 
 #[cfg(test)]
@@ -102,12 +128,12 @@ let result = add(five, ten);
             Token::Let,
             Token::Ident("five".to_string()),
             Token::Assign,
-            Token::Int(5),
+            Token::Int("5".to_string()),
             Token::Semicolon,
             Token::Let,
             Token::Ident("ten".to_string()),
             Token::Assign,
-            Token::Int(10),
+            Token::Int("10".to_string()),
             Token::Semicolon,
             Token::Let,
             Token::Ident("add".to_string()),

@@ -5,7 +5,7 @@ pub enum Token {
 
     // Identifier + literals
     Ident(String),
-    Int(i64),
+    Int(String),
 
     // Operators
     Assign,
