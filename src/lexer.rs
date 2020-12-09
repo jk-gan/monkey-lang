@@ -39,11 +39,17 @@ impl<'a> Lexer<'a> {
         self.skip_whitespace();
         let token = match self.ch {
             '=' => Token::Assign,
+            '+' => Token::Plus,
+            '-' => Token::Minus,
+            '!' => Token::Bang,
+            '/' => Token::Slash,
+            '*' => Token::Asterisk,
+            '<' => Token::LT,
+            '>' => Token::GT,
             ';' => Token::Semicolon,
+            ',' => Token::Comma,
             '(' => Token::LParen,
             ')' => Token::RParen,
-            ',' => Token::Comma,
-            '+' => Token::Plus,
             '{' => Token::LBrace,
             '}' => Token::RBrace,
             '\u{0000}' => Token::EOF,
@@ -122,6 +128,8 @@ let add = fn(x, y) {
 };
 
 let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
 "#;
 
         let test = vec![
@@ -161,6 +169,18 @@ let result = add(five, ten);
             Token::Ident("ten".to_string()),
             Token::RParen,
             Token::Semicolon,
+            Token::Bang,
+            Token::Minus,
+            Token::Slash,
+            Token::Asterisk,
+            Token::Int("5".to_string()),
+            Token::Semicolon,
+            Token::Int("5".to_string()),
+            Token::LT,
+            Token::Int("10".to_string()),
+            Token::GT,
+            Token::Int("5".to_string()),
+            Token::Semicolon,
             Token::EOF,
         ];
 
@@ -171,7 +191,7 @@ let result = add(five, ten);
 
             assert_eq!(
                 tok, *t,
-                "test[{}] - token is wrong. expected {:?} but got {:?}",
+                "test[{}] - token is wrong. expected {} but got {}",
                 i, t, tok
             );
         }
