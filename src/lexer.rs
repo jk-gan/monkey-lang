@@ -38,10 +38,22 @@ impl<'a> Lexer<'a> {
     fn next_token(&mut self) -> Token {
         self.skip_whitespace();
         let token = match self.ch {
-            '=' => Token::Assign,
+            '=' => match self.peek_char() {
+                Some('=') => {
+                    self.read_char();
+                    Token::Eq
+                }
+                _ => Token::Assign,
+            },
             '+' => Token::Plus,
             '-' => Token::Minus,
-            '!' => Token::Bang,
+            '!' => match self.peek_char() {
+                Some('=') => {
+                    self.read_char();
+                    Token::NotEq
+                }
+                _ => Token::Bang,
+            },
             '/' => Token::Slash,
             '*' => Token::Asterisk,
             '<' => Token::LT,
@@ -98,6 +110,10 @@ impl<'a> Lexer<'a> {
             .collect()
     }
 
+    fn peek_char(&self) -> Option<char> {
+        self.input.chars().nth(self.read_position)
+    }
+
     fn skip_whitespace(&mut self) {
         while self.ch.is_ascii_whitespace() {
             self.read_char();
@@ -136,6 +152,9 @@ if (5 < 10) {
 } else {
     return false;
 }
+
+10 == 10;
+10 != 9;
 "#;
 
         let test = vec![
@@ -204,6 +223,14 @@ if (5 < 10) {
             Token::False,
             Token::Semicolon,
             Token::RBrace,
+            Token::Int("10".to_string()),
+            Token::Eq,
+            Token::Int("10".to_string()),
+            Token::Semicolon,
+            Token::Int("10".to_string()),
+            Token::NotEq,
+            Token::Int("9".to_string()),
+            Token::Semicolon,
             Token::EOF,
         ];
 

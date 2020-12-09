@@ -20,6 +20,9 @@ pub enum Token {
     LT,
     GT,
 
+    Eq,
+    NotEq,
+
     // Delimiters
     Comma,
     Semicolon,
@@ -57,6 +60,9 @@ impl fmt::Display for Token {
 
             Token::LT => write!(f, "<"),
             Token::GT => write!(f, ">"),
+
+            Token::Eq => write!(f, "=="),
+            Token::NotEq => write!(f, "!="),
 
             Token::Comma => write!(f, ","),
             Token::Semicolon => write!(f, ";"),
