@@ -32,6 +32,11 @@ pub enum Token {
     // Keywords
     Function,
     Let,
+    True,
+    False,
+    If,
+    Else,
+    Return,
 }
 
 impl fmt::Display for Token {
@@ -63,6 +68,11 @@ impl fmt::Display for Token {
 
             Token::Function => write!(f, "fn"),
             Token::Let => write!(f, "let"),
+            Token::True => write!(f, "true"),
+            Token::False => write!(f, "false"),
+            Token::If => write!(f, "if"),
+            Token::Else => write!(f, "else"),
+            Token::Return => write!(f, "return"),
         }
     }
 }
@@ -71,6 +81,11 @@ pub fn lookup_keyword(ident: &str) -> Option<Token> {
     match ident {
         "fn" => Some(Token::Function),
         "let" => Some(Token::Let),
+        "true" => Some(Token::True),
+        "false" => Some(Token::False),
+        "if" => Some(Token::If),
+        "else" => Some(Token::Else),
+        "return" => Some(Token::Return),
         _ => None,
     }
 }
