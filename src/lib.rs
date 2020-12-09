@@ -1,4 +1,5 @@
 mod lexer;
+pub mod repl;
 mod token;
 
 #[cfg(test)]
